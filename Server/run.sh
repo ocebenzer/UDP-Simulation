@@ -1,1 +1,6 @@
-docker run -dp 61000:61000 server
+docker run \
+    --network udp_network \
+    --ip 192.168.10.10 \
+    --hostname udpserver \
+    --name udpserver \
+    --rm -it server
