@@ -5,15 +5,13 @@
 #include <netinet/in.h>
 
 struct data_packet {
-    long id;
+    int id;
     struct timeval timestamp;
 };
 
-void send_packet(int socketfd, struct sockaddr_in server_address) {
-    static long packet_id = 0;
-
+void send_packet(int socketfd, struct sockaddr_in server_address, int packet_id) {
     struct data_packet packet;
-    packet.id = packet_id++;
+    packet.id = packet_id;
     gettimeofday(&packet.timestamp, NULL);
 
     long len = sendto(socketfd, (const struct data_packet *) &packet, sizeof(packet),
@@ -24,7 +22,6 @@ void send_packet(int socketfd, struct sockaddr_in server_address) {
 }
 
 int main(int argc, char* argv[]) {
-    puts("Client starting");
     if (argc < 4) {
         fprintf(stderr, "usage: '%s [IP_ADDR] [PORT] [PACKET_AMOUNT]'\n", argv[0]);
         exit(EXIT_FAILURE);
@@ -42,11 +39,14 @@ int main(int argc, char* argv[]) {
     server_address.sin_port = htons(port);
     server_address.sin_addr.s_addr = inet_addr(argv[1]);
 
-    puts("Client ready");
-    for (int i = 0; i < packet_amount; ++i) {
-        send_packet(socketfd, server_address);
+    puts("Client Ready");
+    for (int i = 0; i < packet_amount; i++) {
+        send_packet(socketfd, server_address, i+1); // packet ids start from 1
+        int delay_usec = 1000 + rand() % 4000; // 1ms - 5ms
+        usleep(delay_usec);
     }
 
+    send_packet(socketfd, server_address, -1);
     close(socketfd);
     return 0;
 }
