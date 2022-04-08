@@ -9,24 +9,36 @@ struct data_packet {
     struct timeval time;
 };
 
-void recv_packet(int socketfd){
-    socklen_t len = 0;
-    struct data_packet packet = {0};
-    recvfrom(socketfd, (struct data_packet *) &packet, sizeof(packet),
-                        MSG_WAITALL, 0, &len);
-    printf("packet #%ld: %ld.%06ld\n", packet.id, packet.time.tv_sec, packet.time.tv_usec);
+int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)
+{
+  result->tv_sec = x->tv_sec - y->tv_sec;
 
+  if ((result->tv_usec = x->tv_usec - y->tv_usec) < 0)
+  {
+    result->tv_usec += 1000000;
+    result->tv_sec--; // borrow
+  }
+
+  return result->tv_sec < 0;
+}
+
+void recv_packet(int socketfd, struct data_packet *packet){
+    struct timeval *current;
+    gettimeofday(current, NULL);
+    recv(socketfd, packet, sizeof(*packet), MSG_WAITALL);
+    timeval_subtract(&packet->time, &packet->time, current);
+    // printf("packet #%ld: %ld.%06ld\n", packet->id, packet->time.tv_sec, packet->time.tv_usec);
 }
 
 int main(int argc, char* argv[]) {
     printf("Server starting");
-    int packet_amount;
-    if (argc < 2) {
-        fprintf(stderr, "usage: '%s [PORT]'\n", argv[0]);
+    if (argc < 3) {
+        fprintf(stderr, "usage: '%s [PORT] [PACKET_AMOUNT]'\n", argv[0]);
         exit(EXIT_FAILURE);
     }
-    if (argc == 3) packet_amount = atoi(argv[2]);
     int port = atoi(argv[1]);
+    int packet_amount = atoi(argv[2]);
+    struct data_packet packets[packet_amount];
 
     struct sockaddr_in server_address = {0};
     int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -45,8 +57,10 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    FILE *file = fopen("./log.csv", "w");
     printf("Server ready");
-    for (int i = 0; argc < 3 || i < packet_amount; i++) {
-        recv_packet(socketfd);
+    for (int i = 0; i < packet_amount; i++) {
+        recv_packet(socketfd, &packets[i]);
+        fprintf(file, "%ld, %ld.%06ld\n", packets[i].id, packets[i].time.tv_sec, packets[i].time.tv_usec);
     }
 }
