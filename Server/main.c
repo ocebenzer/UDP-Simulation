@@ -6,7 +6,9 @@
 
 struct data_packet {
     long id;
-    struct timeval time;
+    struct timeval time_client;
+    struct timeval time_server;
+    struct timeval time_relative;
 };
 
 int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)
@@ -23,15 +25,13 @@ int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *
 }
 
 void recv_packet(int socketfd, struct data_packet *packet){
-    struct timeval *current;
-    gettimeofday(current, NULL);
     recv(socketfd, packet, sizeof(*packet), MSG_WAITALL);
-    timeval_subtract(&packet->time, &packet->time, current);
-    // printf("packet #%ld: %ld.%06ld\n", packet->id, packet->time.tv_sec, packet->time.tv_usec);
+    gettimeofday(&packet->time_server, NULL);
+    timeval_subtract(&packet->time_relative, &packet->time_server, &packet->time_client);
 }
 
 int main(int argc, char* argv[]) {
-    printf("Server starting");
+    puts("Server starting");
     if (argc < 3) {
         fprintf(stderr, "usage: '%s [PORT] [PACKET_AMOUNT]'\n", argv[0]);
         exit(EXIT_FAILURE);
@@ -58,9 +58,13 @@ int main(int argc, char* argv[]) {
     }
 
     FILE *file = fopen("./log.csv", "w");
-    printf("Server ready");
+    puts("Server ready");
+    fprintf(file, "id, diff, time send, time receive\n");
     for (int i = 0; i < packet_amount; i++) {
         recv_packet(socketfd, &packets[i]);
-        fprintf(file, "%ld, %ld.%06ld\n", packets[i].id, packets[i].time.tv_sec, packets[i].time.tv_usec);
+        fprintf(file, "%ld, %ld.%06ld, %ld.%06ld, %ld.%06ld\n",packets[i].id,
+                packets[i].time_relative.tv_sec, packets[i].time_relative.tv_usec,
+                packets[i].time_server.tv_sec, packets[i].time_server.tv_usec,
+                packets[i].time_client.tv_sec, packets[i].time_client.tv_usec);
     }
 }
