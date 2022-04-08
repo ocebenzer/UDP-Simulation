@@ -8,26 +8,25 @@ struct data_packet {
     long id;
     struct timeval time_client;
     struct timeval time_server;
-    struct timeval time_relative;
+    double time_relative;
 };
 
-int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)
-{
-  result->tv_sec = x->tv_sec - y->tv_sec;
+/*
+ * double theTime = tv.tv_sec + (0.000001f * tv.tv_usec);
+ * printf( "time as double = %f\n", theTime );
+ * printf( "sys time sec = %d\n", (unsigned int)tv.tv_sec );
+ * printf( "sys time usec = %d\n", (unsigned int)tv.tv_usec );
+ * printf( "sys time = %d\n", (unsigned int)time(0) );
+ */
 
-  if ((result->tv_usec = x->tv_usec - y->tv_usec) < 0)
-  {
-    result->tv_usec += 1000000;
-    result->tv_sec--; // borrow
-  }
-
-  return result->tv_sec < 0;
+double time_to_double(struct timeval time) {
+    return time.tv_sec + 0.000001*time.tv_usec;
 }
 
 void recv_packet(int socketfd, struct data_packet *packet){
     recv(socketfd, packet, sizeof(*packet), MSG_WAITALL);
     gettimeofday(&packet->time_server, NULL);
-    timeval_subtract(&packet->time_relative, &packet->time_server, &packet->time_client);
+    packet->time_relative = time_to_double(packet->time_server) - time_to_double(packet->time_client);
 }
 
 int main(int argc, char* argv[]) {
@@ -62,8 +61,7 @@ int main(int argc, char* argv[]) {
     fprintf(file, "id, diff, time send, time receive\n");
     for (int i = 0; i < packet_amount; i++) {
         recv_packet(socketfd, &packets[i]);
-        fprintf(file, "%ld, %ld.%06ld, %ld.%06ld, %ld.%06ld\n",packets[i].id,
-                packets[i].time_relative.tv_sec, packets[i].time_relative.tv_usec,
+        fprintf(file, "%ld, %lf, %ld.%06ld, %ld.%06ld\n",packets[i].id, packets[i].time_relative,
                 packets[i].time_server.tv_sec, packets[i].time_server.tv_usec,
                 packets[i].time_client.tv_sec, packets[i].time_client.tv_usec);
     }
