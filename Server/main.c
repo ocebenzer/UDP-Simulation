@@ -6,27 +6,38 @@
 
 struct data_packet {
     long id;
-    struct timeval time;
+    struct timeval time_client;
+    struct timeval time_server;
+    double time_relative;
 };
 
-void recv_packet(int socketfd){
-    socklen_t len = 0;
-    struct data_packet packet = {0};
-    recvfrom(socketfd, (struct data_packet *) &packet, sizeof(packet),
-                        MSG_WAITALL, 0, &len);
-    printf("packet #%ld: %ld.%06ld\n", packet.id, packet.time.tv_sec, packet.time.tv_usec);
+/*
+ * double theTime = tv.tv_sec + (0.000001f * tv.tv_usec);
+ * printf( "time as double = %f\n", theTime );
+ * printf( "sys time sec = %d\n", (unsigned int)tv.tv_sec );
+ * printf( "sys time usec = %d\n", (unsigned int)tv.tv_usec );
+ * printf( "sys time = %d\n", (unsigned int)time(0) );
+ */
 
+double time_to_double(struct timeval time) {
+    return time.tv_sec + 0.000001*time.tv_usec;
+}
+
+void recv_packet(int socketfd, struct data_packet *packet){
+    recv(socketfd, packet, sizeof(*packet), MSG_WAITALL);
+    gettimeofday(&packet->time_server, NULL);
+    packet->time_relative = time_to_double(packet->time_server) - time_to_double(packet->time_client);
 }
 
 int main(int argc, char* argv[]) {
-    printf("Server starting");
-    int packet_amount;
-    if (argc < 2) {
-        fprintf(stderr, "usage: '%s [PORT]'\n", argv[0]);
+    puts("Server starting");
+    if (argc < 3) {
+        fprintf(stderr, "usage: '%s [PORT] [PACKET_AMOUNT]'\n", argv[0]);
         exit(EXIT_FAILURE);
     }
-    if (argc == 3) packet_amount = atoi(argv[2]);
     int port = atoi(argv[1]);
+    int packet_amount = atoi(argv[2]);
+    struct data_packet packets[packet_amount];
 
     struct sockaddr_in server_address = {0};
     int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -45,8 +56,13 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    printf("Server ready");
-    for (int i = 0; argc < 3 || i < packet_amount; i++) {
-        recv_packet(socketfd);
+    FILE *file = fopen("./log.csv", "w");
+    puts("Server ready");
+    fprintf(file, "id, diff, time send, time receive\n");
+    for (int i = 0; i < packet_amount; i++) {
+        recv_packet(socketfd, &packets[i]);
+        fprintf(file, "%ld, %lf, %ld.%06ld, %ld.%06ld\n",packets[i].id, packets[i].time_relative,
+                packets[i].time_server.tv_sec, packets[i].time_server.tv_usec,
+                packets[i].time_client.tv_sec, packets[i].time_client.tv_usec);
     }
 }

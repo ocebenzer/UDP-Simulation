@@ -9,4 +9,4 @@ FROM alpine
 COPY --from=build-env /app/server /app/server
 WORKDIR /app
 EXPOSE 61000/udp
-CMD ["/app/server", "61000", "20"]
+CMD ["/app/server", "192.168.1.10", "61000", "20"]

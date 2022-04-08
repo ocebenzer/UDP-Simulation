@@ -24,13 +24,13 @@ void send_packet(int socketfd, struct sockaddr_in server_address) {
 }
 
 int main(int argc, char* argv[]) {
-    printf("Client starting");
-    if (argc < 3) {
-        fprintf(stderr, "usage: '%s [PORT] [PACKET_AMOUNT]'\n", argv[0]);
+    puts("Client starting");
+    if (argc < 4) {
+        fprintf(stderr, "usage: '%s [IP_ADDR] [PORT] [PACKET_AMOUNT]'\n", argv[0]);
         exit(EXIT_FAILURE);
     }
-    int port = atoi(argv[1]);
-    int packet_amount = atoi(argv[2]);
+    int port = atoi(argv[2]);
+    int packet_amount = atoi(argv[3]);
 
     struct sockaddr_in server_address = {0};
     int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -40,9 +40,9 @@ int main(int argc, char* argv[]) {
     }
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(port);
-    server_address.sin_addr.s_addr = inet_addr("192.168.10.10");
-    
-    printf("Client ready");
+    server_address.sin_addr.s_addr = inet_addr(argv[1]);
+
+    puts("Client ready");
     for (int i = 0; i < packet_amount; ++i) {
         send_packet(socketfd, server_address);
     }
