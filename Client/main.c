@@ -25,7 +25,7 @@ void send_packet(int socketfd, struct sockaddr_in server_address) {
 
 int main(int argc, char* argv[]) {
     puts("Client starting");
-    if (argc < 3) {
+    if (argc < 4) {
         fprintf(stderr, "usage: '%s [IP_ADDR] [PORT] [PACKET_AMOUNT]'\n", argv[0]);
         exit(EXIT_FAILURE);
     }
