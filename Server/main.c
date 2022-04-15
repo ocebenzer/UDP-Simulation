@@ -66,12 +66,15 @@ int main(int argc, char* argv[]) {
     int packet_counter = 0;
     struct data_packet *prev_packet, *packet;
     double delay_sum, delay_max, delay_min=999;
+    
+    // get initial packet
+    prev_packet = &packets[packet_counter++];
+    packet = &packets[packet_counter];
+    recv_packet(socketfd, packet);
+    puts("Receiced initial packet");
+    
     while (1) {
-        prev_packet = &packets[packet_counter++];
-        packet = &packets[packet_counter];
-        recv_packet(socketfd, packet);
-        if (packet->id == -1) break;
-
+        // update packet statistics
         delay_sum += packet->time_relative;
         delay_max = MAX(delay_max, packet->time_relative);
         delay_min = MIN(delay_min, packet->time_relative);
@@ -79,9 +82,16 @@ int main(int argc, char* argv[]) {
         if (packet->id % 50 == 0) printf("Running.. %d\r", packet->id);
         if (prev_packet->id + 1 != packet->id) printf("#%d lost\n", prev_packet->id);
 
+        // log packet data
         fprintf(file, "%d, %lf, %ld.%06ld, %ld.%06ld\n",packet->id, packet->time_relative,
                 packet->time_server.tv_sec, packet->time_server.tv_usec,
                 packet->time_client.tv_sec, packet->time_client.tv_usec);
+        
+        // get next packet
+        prev_packet = &packets[packet_counter++];
+        packet = &packets[packet_counter];
+        recv_packet(socketfd, packet);
+        if (packet->id == -1) break;
     }
     packet_counter--; // remove last packet from results
 
