@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
 
     int packet_counter = 0;
     struct data_packet *prev_packet, *packet;
-    double delay_sum, delay_max, delay_min=999;
+    double delay_sum, delay_max=-999, delay_min=999;
     
     // get initial packet
     prev_packet = &packets[packet_counter++];
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
         delay_min = MIN(delay_min, packet->time_relative);
 
         if (packet->id % 50 == 0) printf("Running.. %d\r", packet->id);
-        if (prev_packet->id + 1 != packet->id) printf("#%d lost\n", prev_packet->id);
+        if (prev_packet->id + 1 != packet->id) printf("\r#%d lost\n", prev_packet->id);
 
         // log packet data
         fprintf(file, "%d, %lf, %ld.%06ld, %ld.%06ld\n",packet->id, packet->time_relative,
