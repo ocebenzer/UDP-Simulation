@@ -1,0 +1,30 @@
+apiVersion: v1 
+kind: Pod
+metadata:
+  name: udpserver
+spec:
+  restartPolicy: Never
+  containers:
+  - name: server
+    image: ocebenzer/cmpe492-server
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "512Mi"
+    command: ["/app/server"]
+    args: ["$(PORT)", "$(LOGFILE_PATH)"]
+    # ports:
+    # - containerPort: 61000
+    #   protocol: UDP
+    env:
+    - name: PORT
+      value: "61000"
+    - name: LOGFILE_PATH
+      value: "/storage/server.log"
+    volumeMounts:
+      - mountPath: "/storage"
+        name: mymount
+  volumes:
+    - name: mymount
+      persistentVolumeClaim:
+        claimName: mypvc

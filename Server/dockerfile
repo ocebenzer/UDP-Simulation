@@ -1,12 +1,10 @@
 FROM alpine as build-env
 RUN apk add --no-cache build-base
 WORKDIR /app
-COPY main.c .
-# Compile the binaries
-RUN gcc main.c -o server -lm
+COPY server.c .
+# Compile the binaries (-lm is to link math.c)
+RUN gcc server.c -o server -lm
 
 FROM alpine
 COPY --from=build-env /app/server /app/server
-WORKDIR /app
 EXPOSE 61000/udp
-CMD ["/app/server", "61000"] 
