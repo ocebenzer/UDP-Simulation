@@ -1,1 +1,1 @@
-docker build -t server .
+docker build -t ocebenzer/cmpe492-server .

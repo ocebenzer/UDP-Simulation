@@ -14,18 +14,23 @@ void send_packet(int socketfd, struct sockaddr_in server_address, int packet_id)
     packet.id = packet_id;
     gettimeofday(&packet.timestamp, NULL);
 
+    printf("send_packet - before\n");
+    fflush(stdout);
     long len = sendto(socketfd, (const struct data_packet *) &packet, sizeof(packet),
             0, (const struct sockaddr *) &server_address, sizeof(server_address));
     if (len == -1) {
         perror("failed to send packet");
     }
+    printf("send_packet - after\n");
+    fflush(stdout);
 }
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
-        fprintf(stderr, "usage: '%s [IP_ADDR] [PORT] [PACKET_AMOUNT]'\n", argv[0]);
+        fprintf(stderr, "usage: '%s [SERVER_IP] [PORT] [PACKET_AMOUNT]'\n", argv[0]);
         exit(EXIT_FAILURE);
     }
+    char* server_ip = argv[1];
     int port = atoi(argv[2]);
     int packet_amount = atoi(argv[3]);
 
@@ -37,12 +42,15 @@ int main(int argc, char* argv[]) {
     }
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(port);
-    server_address.sin_addr.s_addr = inet_addr(argv[1]);
+    server_address.sin_addr.s_addr = inet_addr(server_ip);
 
-    puts("Client Ready");
+    printf("Starting to send Packets to %s:%d\n", server_ip, port);
     for (int i = 0; i < packet_amount; i++) {
+        printf("Trying to send Packet#%d/%d\n", i+1, packet_amount);
+        fflush(stdout);
         send_packet(socketfd, server_address, i+1); // packet ids start from 1
         int delay_usec = 1000 + rand() % 4000; // 1ms - 5ms
+        printf("Packet #%d sent\n", i+1);
         usleep(delay_usec);
     }
 

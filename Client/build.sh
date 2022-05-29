@@ -1,1 +1,1 @@
-docker build -t client .
+docker build -t ocebenzer/cmpe492-client .
