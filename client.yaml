@@ -6,7 +6,7 @@ spec:
   restartPolicy: Never
   containers:
   - name: client
-    image: ocebenzer/cmpe492-client
+    image: ocebenzer/cmpe492-client:1
     resources:
       limits:
         cpu: "1000m"

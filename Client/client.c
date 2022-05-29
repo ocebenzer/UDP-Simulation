@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
         send_packet(socketfd, server_address, i+1); // packet ids start from 1
         int delay_usec = 1000 + rand() % 4000; // 1ms - 5ms
         printf("Packet #%d sent\n", i+1);
-        sleep(60);
+        usleep(delay_usec);
     }
 
     send_packet(socketfd, server_address, -1);

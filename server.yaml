@@ -6,21 +6,18 @@ spec:
   restartPolicy: Never
   containers:
   - name: server
-    image: ocebenzer/cmpe492-server
+    image: ocebenzer/cmpe492-server:1
     resources:
       limits:
         cpu: "1000m"
         memory: "512Mi"
     command: ["/app/server"]
     args: ["$(PORT)", "$(LOGFILE_PATH)"]
-    # ports:
-    # - containerPort: 61000
-    #   protocol: UDP
     env:
     - name: PORT
       value: "61000"
     - name: LOGFILE_PATH
-      value: "/storage/server.log"
+      value: "/storage/server.csv"
     volumeMounts:
       - mountPath: "/storage"
         name: mymount

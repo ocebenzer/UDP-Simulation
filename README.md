@@ -1,23 +1,50 @@
  
-### Instructions
+# How to run the simulation
 
-* Enable docker to reach host network with command:
+## Cluster Initialization
 
-`sudo iptables -A INPUT -i docker0 -j ACCEPT`
+* Create a kubernetes cluster
+    * [mininet](http://mininet.org/download/) might be a good start
 
-(Enabling docker to reach host network might be a bad idea)
+* Create a Persistent Volume && Persistent Volume Claim:
+    ```
+    kubectl apply -f pv.yaml
+    kubectl apply -f pvc.yaml
+    ```
+    * This makes sure that our storage is independent from our Server pods
 
-<!--
-* Create a Docker network using command:
+## Pod Initialization
+* Create a Server pod:
+    ```
+    kubectl apply -f server.yaml
+    ```
 
-`docker network create --attachable --driver=bridge --subnet=192.168.0.0/16 --ip-range=192.168.10.0/24 udp_network`
+* Wait until pod is created:
+    ```
+    kubectl get status -o wide
+    ```
 
--->
+* When pod is created, set the pod IP address as the `SERVER_IP` value in `client.yaml` file
 
-* Build & Run Server image using:
+* Create a Client pod:
+    ```
+    kubectl apply -f client.yaml
+    ```
 
-`./Server/build.sh && ./Server/run.sh`
+* Wait until pod is created:
+    ```
+    kubectl get status -o wide
+    ```
 
-* Build & Run Client image using:
+## See Results
+* Enter the storage pod:
+    ```
+    kubectl exec --stdin --tty udpserver -- /bin/sh
+    ```
 
-`./Client/build.sh && ./Client/run.sh`
+* Display the .csv file:
+    ```
+    cat /storage/server.csv
+    ```
+
+### Well Done

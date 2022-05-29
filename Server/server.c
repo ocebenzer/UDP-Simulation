@@ -29,7 +29,7 @@ double time_to_double(struct timeval time) {
 }
 
 void recv_packet(int socketfd, struct data_packet *packet){
-    recv(socketfd, packet, sizeof(*packet), MSG_WAITALL);
+    recv(socketfd, packet, sizeof(*packet), 0);
     gettimeofday(&packet->time_server, NULL);
     packet->time_relative = time_to_double(packet->time_server) - time_to_double(packet->time_client);
 }
@@ -43,12 +43,12 @@ int main(int argc, char* argv[]) {
     char* filepath = argv[2];
     struct data_packet *packets = malloc(PACKET_MAX*sizeof(struct data_packet));
 
-    struct sockaddr_in server_address = {0};
     int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
     if(socketfd == -1) {
         perror("socket creation failed");
         exit(EXIT_FAILURE);
     }
+    struct sockaddr_in server_address = {0};
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(port);
     server_address.sin_addr.s_addr = INADDR_ANY;
@@ -61,12 +61,13 @@ int main(int argc, char* argv[]) {
     }
 
     FILE *file = fopen(filepath, "w");
+    fprintf(file, "id, diff, time send, time receive\n");
+    fflush(file);
 
     printf("Logging at %s\n", filepath);
     printf("Server Listening on %d\n", port);
-    fprintf(file, "id, diff, time send, time receive\n");
     fflush(stdout);
-    fflush(file);
+
     int packet_counter = 0;
     struct data_packet *prev_packet, *packet;
     double delay_sum, delay_max=-999, delay_min=999;
@@ -75,7 +76,8 @@ int main(int argc, char* argv[]) {
     prev_packet = &packets[packet_counter++];
     packet = &packets[packet_counter];
     recv_packet(socketfd, packet);
-    puts("Receiced initial packet");
+    fprintf("Receiced initial packet\n");
+    fflush(stdout);
     
     while (1) {
         // update packet statistics
@@ -90,6 +92,7 @@ int main(int argc, char* argv[]) {
         fprintf(file, "%d, %lf, %ld.%06ld, %ld.%06ld\n",packet->id, packet->time_relative,
                 packet->time_server.tv_sec, packet->time_server.tv_usec,
                 packet->time_client.tv_sec, packet->time_client.tv_usec);
+        fflush(file);
         
         // get next packet
         prev_packet = &packets[packet_counter++];
