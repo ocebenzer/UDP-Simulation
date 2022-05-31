@@ -39,7 +39,7 @@
 ## See Results
 * Enter the storage pod:
     ```
-    kubectl exec --stdin --tty udpserver -- /bin/sh
+    kubectl exec --stdin --tty server -- /bin/sh
     ```
 
 * Display the .csv file:
