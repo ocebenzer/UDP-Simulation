@@ -21,5 +21,6 @@ kubectl exec
 kubectl attach
 samplicate 61000 172.17.0.3/61000
 SSH -L Wrapper + Daemon
+socat - udp4-listen:61000 | tee >(socat - udp-sendto:172.17.0.3:61000)
 socat - udp4-listen:61000,fork | tee >(socat - udp-sendto:172.17.0.3:61000) >(socat - udp-sendto:172.17.0.4:6100)
 ```
