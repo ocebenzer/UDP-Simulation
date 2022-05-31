@@ -1,0 +1,18 @@
+FROM alpine as build-env
+RUN apk add --no-cache build-base
+WORKDIR /app
+COPY sdn.c .
+# Compile the binaries
+RUN gcc sdn.c -o sdn
+
+## Install samplicator
+# RUN wget https://github.com/sleinen/samplicator/releases/download/v1.3.6/samplicator-1.3.6.tar.gz
+# RUN tar -xvzf samplicator-1.3.6.tar.gz 
+# WORKDIR /app/samplicator-1.3.6
+# RUN ./configure && make
+
+FROM alpine
+RUN apk add --no-cache socat
+COPY --from=build-env /app/sdn /app/sdn
+# COPY --from=build-env /app/samplicator-1.3.6/samplicate /usr/local/bin
+# CMD [ "/bin/sh" ]

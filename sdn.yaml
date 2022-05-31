@@ -1,0 +1,19 @@
+apiVersion: v1 
+kind: Pod
+metadata:
+  name: sdn
+spec:
+  restartPolicy: Never
+  containers:
+  - name: sdn
+    image: ocebenzer/sdn
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "512Mi"
+    command: ["/app/sdn"]
+    ports:
+    - containerPort: 61000
+      protocol: UDP
+    - containerPort: 61001
+      protocol: UDP
