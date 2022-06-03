@@ -1,0 +1,14 @@
+apiVersion: v1 
+kind: Pod
+metadata:
+  name: udpserver
+spec:
+  restartPolicy: Never
+  containers:
+  - name: server
+    image: ocebenzer/cmpe492-sdn
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "512Mi"
+    command: ["/app/sdn"]

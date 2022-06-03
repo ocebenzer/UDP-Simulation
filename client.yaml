@@ -13,9 +13,9 @@ spec:
         memory: "512Mi"
     command: ["/app/client"]
     args: ["$(SERVER_IP)", "$(SERVER_PORT)", "$(PACKET_AMOUNT)"]
-    ports:
-    - containerPort: 61000
-      protocol: UDP
+    # ports:
+    # - containerPort: 61000
+    #   protocol: UDP
     env:
     - name: SERVER_IP
       value: "172.17.0.3"

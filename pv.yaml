@@ -5,7 +5,7 @@ metadata:
 spec:
   storageClassName: mystorage
   capacity:
-    storage: 1Gi
+    storage: 256Mi
   accessModes:
   - ReadWriteMany
   hostPath:
