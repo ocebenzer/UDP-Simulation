@@ -1,1 +1,1 @@
-docker build -t ocebenzer/cmpe492-sdn .
+docker build -t ocebenzer/udpsdn .

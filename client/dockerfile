@@ -7,4 +7,3 @@ RUN gcc client.c -o client
 
 FROM alpine
 COPY --from=build-env /app/client /app/client
-#EXPOSE 61000/udp

@@ -1,21 +1,18 @@
-apiVersion: v1 
+apiVersion: v1
 kind: Pod
 metadata:
-  name: udpclient
+  name: client
 spec:
   restartPolicy: Never
   containers:
   - name: client
-    image: ocebenzer/cmpe492-client
+    image: ocebenzer/udpclient
     resources:
       limits:
         cpu: "1000m"
         memory: "512Mi"
     command: ["/app/client"]
     args: ["$(SERVER_IP)", "$(SERVER_PORT)", "$(PACKET_AMOUNT)"]
-    # ports:
-    # - containerPort: 61000
-    #   protocol: UDP
     env:
     - name: SERVER_IP
       value: "172.17.0.4"

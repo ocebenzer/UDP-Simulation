@@ -1,1 +1,1 @@
-docker push ocebenzer/cmpe492-server
+docker push ocebenzer/udpserver

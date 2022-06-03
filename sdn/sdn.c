@@ -19,13 +19,13 @@ char buffer[BUFFER_SIZE], token[TOKEN_SIZE];
 int tunnel_ctr, t_index;
 
 int is_invalid_dest(char* dest) {
-    u_int8_t ip[4];
+    char ip[4];
     unsigned short port;
     int parse_status = sscanf(dest, "%hhu.%hhu.%hhu.%hhu:%hu", &ip[0], &ip[1], &ip[2], &ip[3], &port);
     return parse_status <= 0;
 }
 
-int create_tunnel(struct tunnel *t) {      
+int create_tunnel(struct tunnel *t) {
     int fd[2]; // fd[1] -> fd[0]
     if (pipe(fd) == -1) {
         printf("Piping failed\n");

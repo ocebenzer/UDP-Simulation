@@ -71,14 +71,14 @@ int main(int argc, char* argv[]) {
     int packet_counter = 0;
     struct data_packet *prev_packet, *packet;
     double delay_sum, delay_max=-999, delay_min=999;
-    
+
     // get initial packet
     prev_packet = &packets[packet_counter++];
     packet = &packets[packet_counter];
     recv_packet(socketfd, packet);
-    fprintf("Receiced initial packet\n");
+    printf("Receiced initial packet\n");
     fflush(stdout);
-    
+
     while (1) {
         // update packet statistics
         delay_sum += packet->time_relative;
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
                 packet->time_server.tv_sec, packet->time_server.tv_usec,
                 packet->time_client.tv_sec, packet->time_client.tv_usec);
         fflush(file);
-        
+
         // get next packet
         prev_packet = &packets[packet_counter++];
         packet = &packets[packet_counter];

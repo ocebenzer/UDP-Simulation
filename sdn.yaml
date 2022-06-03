@@ -1,4 +1,4 @@
-apiVersion: v1 
+apiVersion: v1
 kind: Pod
 metadata:
   name: sdn
@@ -6,7 +6,7 @@ spec:
   restartPolicy: Never
   containers:
   - name: sdn
-    image: ocebenzer/sdn
+    image: ocebenzer/udpsdn
     resources:
       limits:
         cpu: "1000m"
