@@ -1,0 +1,10 @@
+FROM alpine as build-env
+RUN apk add --no-cache build-base
+WORKDIR /app
+COPY sdn.c .
+RUN gcc sdn.c -o sdn
+
+FROM alpine
+RUN apk add socat
+COPY --from=build-env /app/sdn /app/sdn
+EXPOSE 61000/udp

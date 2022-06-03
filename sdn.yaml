@@ -1,0 +1,16 @@
+apiVersion: v1 
+kind: Pod
+metadata:
+  name: sdn
+spec:
+  restartPolicy: Never
+  containers:
+  - name: sdn
+    image: ocebenzer/udpsdn
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "512Mi"
+    command: ["/app/sdn"]
+    stdin: true
+    tty: true
