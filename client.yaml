@@ -6,7 +6,7 @@ spec:
   restartPolicy: Never
   containers:
   - name: client
-    image: ocebenzer/cmpe492-client:1
+    image: ocebenzer/cmpe492-client
     resources:
       limits:
         cpu: "1000m"
@@ -18,8 +18,8 @@ spec:
     #   protocol: UDP
     env:
     - name: SERVER_IP
-      value: "172.17.0.3"
+      value: "172.17.0.4"
     - name: SERVER_PORT
       value: "61000"
     - name: PACKET_AMOUNT
-      value: "600"
+      value: "6000"
