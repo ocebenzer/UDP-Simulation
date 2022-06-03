@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v1 
 kind: Pod
 metadata:
   name: sdn
@@ -12,3 +12,5 @@ spec:
         cpu: "1000m"
         memory: "512Mi"
     command: ["/app/sdn"]
+    stdin: true
+    tty: true

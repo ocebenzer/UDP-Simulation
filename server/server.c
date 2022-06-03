@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    FILE *file = fopen(filepath, "w");
+    FILE *file = fopen(filepath, "a");
     fprintf(file, "id, diff, time send, time receive\n");
     fflush(file);
 

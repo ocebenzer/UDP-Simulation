@@ -40,7 +40,7 @@ int create_tunnel(struct tunnel *t) {
     }
     else if (t->pid_sender == 0) {
         close(fd[1]);
-        dup2(STDIN_FILENO, fd[0]);
+        dup2(fd[0], STDIN_FILENO);
         sprintf(buffer, "udp-sendto:%s", t->dest);
         printf("[%d] Creating Sender: \"%s\"\n", t_index, buffer);
         int status = execl("/usr/bin/socat", "/usr/bin/socat", "-", buffer, NULL);
@@ -57,7 +57,7 @@ int create_tunnel(struct tunnel *t) {
     }
     else if (t->pid_listener == 0) {
         close(fd[0]);
-        dup2(STDOUT_FILENO, fd[1]);
+        dup2(fd[1], STDOUT_FILENO);
         sprintf(buffer, "udp4-listen:%s", t->localport);
         printf("[%d] Creating Listener: \"%s\"\n", t_index, buffer);
         int status = execl("/usr/bin/socat", "/usr/bin/socat", "-", buffer, NULL);

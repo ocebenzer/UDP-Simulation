@@ -26,13 +26,14 @@ void send_packet(int socketfd, struct sockaddr_in server_address, int packet_id)
 }
 
 int main(int argc, char* argv[]) {
-    if (argc < 4) {
-        fprintf(stderr, "usage: '%s [SERVER_IP] [PORT] [PACKET_AMOUNT]'\n", argv[0]);
+    if (argc < 5) {
+        fprintf(stderr, "usage: '%s [SERVER_IP] [PORT] [PACKET_AMOUNT] [DELAY_MULTIPLIER]'\n", argv[0]);
         exit(EXIT_FAILURE);
     }
     char* server_ip = argv[1];
     int port = atoi(argv[2]);
     int packet_amount = atoi(argv[3]);
+    int delay_multiplier = atoi(argv[4]);
 
     struct sockaddr_in server_address = {0};
     int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -49,9 +50,9 @@ int main(int argc, char* argv[]) {
         printf("Trying to send Packet#%d/%d\n", i+1, packet_amount);
         fflush(stdout);
         send_packet(socketfd, server_address, i+1); // packet ids start from 1
-        int delay_usec = 1000 + rand() % 4000; // 1ms - 5ms
+        int delay = 1 + rand() % 4; // 1 - 5
         printf("Packet #%d sent\n", i+1);
-        usleep(delay_usec);
+        usleep(delay * delay_multiplier);
     }
 
     send_packet(socketfd, server_address, -1);

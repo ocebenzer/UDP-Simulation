@@ -12,11 +12,13 @@ spec:
         cpu: "1000m"
         memory: "512Mi"
     command: ["/app/client"]
-    args: ["$(SERVER_IP)", "$(SERVER_PORT)", "$(PACKET_AMOUNT)"]
+    args: ["$(SERVER_IP)", "$(SERVER_PORT)", "$(PACKET_AMOUNT)", "$(DELAY_MULTIPLIER)"]
     env:
     - name: SERVER_IP
-      value: "172.17.0.4"
+      value: "172.17.0.5"
     - name: SERVER_PORT
       value: "61000"
     - name: PACKET_AMOUNT
-      value: "6000"
+      value: "60000"
+    - name: DELAY_MULTIPLIER
+      value: "100000"
