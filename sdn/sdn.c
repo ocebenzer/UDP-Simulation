@@ -7,6 +7,7 @@
 #define TUNNELS_SIZE 64
 #define BUFFER_SIZE 256
 #define TOKEN_SIZE 32
+#define SOCAT_PATH "/usr/bin/socat"
 
 struct tunnel{
     char localport[8];
@@ -43,7 +44,7 @@ int create_tunnel(struct tunnel *t) {
         dup2(fd[0], STDIN_FILENO);
         sprintf(buffer, "udp-sendto:%s", t->dest);
         printf("[%d] Creating Sender: \"%s\"\n", t_index, buffer);
-        int status = execl("/usr/bin/socat", "/usr/bin/socat", "-", buffer, NULL);
+        int status = execl(SOCAT_PATH, SOCAT_PATH, "-", buffer, NULL);
         printf("[%d] Warning - Sender exit status %d\n", t_index, status);
         exit(1);
     }
@@ -60,7 +61,7 @@ int create_tunnel(struct tunnel *t) {
         dup2(fd[1], STDOUT_FILENO);
         sprintf(buffer, "udp4-listen:%s", t->localport);
         printf("[%d] Creating Listener: \"%s\"\n", t_index, buffer);
-        int status = execl("/usr/bin/socat", "/usr/bin/socat", "-", buffer, NULL);
+        int status = execl(SOCAT_PATH, SOCAT_PATH, "-", buffer, NULL);
         printf("[%d] Warning - Listener exit status %d\n", t_index, status);
         exit(1);
     }
@@ -71,7 +72,7 @@ int create_tunnel(struct tunnel *t) {
 }
 
 int remove_tunnel(struct tunnel *t) {
-    int status_listener, status_sender;
+    int status_listener = 0, status_sender = 0;
     if (t->pid_listener != 0){
         status_listener = kill(t->pid_listener, SIGINT);
         if (status_listener) {
