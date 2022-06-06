@@ -35,12 +35,13 @@ void recv_packet(int socketfd, struct data_packet *packet){
 }
 
 int main(int argc, char* argv[]) {
-    if (argc < 3) {
-        fprintf(stderr, "usage: '%s [PORT] [LOGFILE_PATH]'\n", argv[0]);
+    if (argc < 4) {
+        fprintf(stderr, "usage: '%s [PORT] [LOGFILE_PATH] [SERVER_ID]'\n", argv[0]);
         exit(EXIT_FAILURE);
     }
-    int port = atoi(argv[1]);
-    char* filepath = argv[2];
+    const int port = atoi(argv[1]);
+    const char* filepath = argv[2];
+    const char* server_id = argv[3];
     struct data_packet *packets = malloc(PACKET_MAX*sizeof(struct data_packet));
 
     int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -65,7 +66,7 @@ int main(int argc, char* argv[]) {
     fflush(file);
 
     printf("Logging at %s\n", filepath);
-    printf("Server Listening on %d\n", port);
+    printf("Server \"%s\" Listening on %d\n", server_id, port);
     fflush(stdout);
 
     int packet_counter = 0;
@@ -85,11 +86,11 @@ int main(int argc, char* argv[]) {
         delay_max = MAX(delay_max, packet->time_relative);
         delay_min = MIN(delay_min, packet->time_relative);
 
-        if (packet->id % 50 == 0) printf("Running.. %d\r", packet->id);
-        if (prev_packet->id + 1 != packet->id) printf("\r#%d lost\n", prev_packet->id);
+        printf("Received Packet #%d\r", packet->id);
+        if (prev_packet->id + 1 != packet->id) printf("\rPacket #%d lost\n", prev_packet->id);
 
         // log packet data
-        fprintf(file, "%d, %lf, %ld.%06ld, %ld.%06ld\n",packet->id, packet->time_relative,
+        fprintf(file, "%s, %d, %lf, %ld.%06ld, %ld.%06ld\n", server_id, packet->id, packet->time_relative,
                 packet->time_server.tv_sec, packet->time_server.tv_usec,
                 packet->time_client.tv_sec, packet->time_client.tv_usec);
         fflush(file);
@@ -98,15 +99,15 @@ int main(int argc, char* argv[]) {
         prev_packet = &packets[packet_counter++];
         packet = &packets[packet_counter];
         recv_packet(socketfd, packet);
-        // if (packet->id == -1) break;
+        if (packet->id == -1) break;
     }
     packet_counter--; // remove last packet from results
 
-    // double packet_mean = delay_sum / packet_counter;
-    // double packet_variance = 0;
-    // for (int i = 0; i < packet_counter ; i++) {
-    //     packet_variance += pow(packet_mean - packets[i].time_relative, 2);
-    // }
+    double packet_mean = delay_sum / packet_counter;
+    double packet_variance = 0;
+    for (int i = 0; i < packet_counter ; i++) {
+        packet_variance += pow(packet_mean - packets[i].time_relative, 2);
+    }
 
     // printf("\nResults:\n");
     // printf("Last packet ID: %d\n", prev_packet->id);
@@ -117,5 +118,6 @@ int main(int argc, char* argv[]) {
     // printf("Delay mean: %lf\n", packet_mean);
     // printf("Delay variance: %lf\n", packet_variance / (packet_counter - 1));
 
+    printf("\nReceived final packet - exiting\n", packet->id);
     return 0;
 }
