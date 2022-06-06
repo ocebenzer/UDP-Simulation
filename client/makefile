@@ -1,2 +1,2 @@
 all:
-	gcc main.c -o client.out
+	gcc client.c -o client.out -lm

@@ -1,1 +1,4 @@
-docker push ocebenzer/udpclient
+REPOSITORY="ocebenzer/udpclient"
+
+docker build -t $REPOSITORY .
+docker push $REPOSITORY
