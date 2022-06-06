@@ -20,6 +20,8 @@
     kubectl apply -f pv.yaml -f pvc.yaml
     ```
     * This makes sure that our storage is independent from our Server pods
+    
+    * Make sure to create specified local path on node with persistent volume
 
 ## Pod Initialization
 * Create BBU pods:
