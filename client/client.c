@@ -1,8 +1,24 @@
+#include <math.h>
 #include <stdio.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/time.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+
+#define POISSON_AVG 50
+const double POISSON_LIMIT = exp(-POISSON_AVG);
+int poisson_random() { // -ln(POISSON_LIMIT) will be avg
+    int n = 0;
+    double x = (double) rand() / INT_MAX;
+    do {
+        x *= (double) rand() / INT_MAX;
+        n++;
+    } while(x > POISSON_LIMIT);
+    return n;
+}
 
 struct data_packet {
     int id;
@@ -14,15 +30,15 @@ void send_packet(int socketfd, struct sockaddr_in server_address, int packet_id)
     packet.id = packet_id;
     gettimeofday(&packet.timestamp, NULL);
 
-    printf("send_packet - before\n");
-    fflush(stdout);
+    // printf("send_packet - before\n");
+    // fflush(stdout);
     long len = sendto(socketfd, (const struct data_packet *) &packet, sizeof(packet),
             0, (const struct sockaddr *) &server_address, sizeof(server_address));
     if (len == -1) {
         perror("failed to send packet");
     }
-    printf("send_packet - after\n");
-    fflush(stdout);
+    // printf("send_packet - after\n");
+    // fflush(stdout);
 }
 
 int main(int argc, char* argv[]) {
@@ -30,10 +46,10 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "usage: '%s [SERVER_IP] [PORT] [PACKET_AMOUNT] [DELAY_MULTIPLIER]'\n", argv[0]);
         exit(EXIT_FAILURE);
     }
-    char* server_ip = argv[1];
-    int port = atoi(argv[2]);
-    int packet_amount = atoi(argv[3]);
-    int delay_multiplier = atoi(argv[4]);
+    const char* server_ip = argv[1];
+    const int port = atoi(argv[2]);
+    const int packet_amount = atoi(argv[3]);
+    const int delay_multiplier = atoi(argv[4]);
 
     struct sockaddr_in server_address = {0};
     int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -45,17 +61,20 @@ int main(int argc, char* argv[]) {
     server_address.sin_port = htons(port);
     server_address.sin_addr.s_addr = inet_addr(server_ip);
 
-    printf("Starting to send Packets to %s:%d\n", server_ip, port);
+    srand(time(NULL));
+
+    printf("Starting sending %d Packets to %s:%d with poisson random delay %dms\n", packet_amount, server_ip, port, POISSON_AVG*delay_multiplier/1000);
     for (int i = 0; i < packet_amount; i++) {
-        printf("Trying to send Packet#%d/%d\n", i+1, packet_amount);
-        fflush(stdout);
+        int delay = poisson_random() * delay_multiplier;
+        printf("Sending Packet #%d/%d - next delay is %dusec\r", i+1, packet_amount, delay);
+        // fflush(stdout);
         send_packet(socketfd, server_address, i+1); // packet ids start from 1
-        int delay = 1 + rand() % 4; // 1 - 5
-        printf("Packet #%d sent\n", i+1);
-        usleep(delay * delay_multiplier);
+        // printf("Packet #%d sent\n", i+1);
+        usleep(delay);
     }
 
     send_packet(socketfd, server_address, -1);
     close(socketfd);
+    printf("\nDone\n");
     return 0;
 }
