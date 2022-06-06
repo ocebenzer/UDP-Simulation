@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: rru1
 spec:
-  nodeName: cloudran
+  nodeName: k3d-rru-node-0
   restartPolicy: Never
   containers:
   - name: client
@@ -16,10 +16,10 @@ spec:
     args: ["$(SERVER_IP)", "$(SERVER_PORT)", "$(PACKET_AMOUNT)", "$(DELAY_MULTIPLIER)"]
     env:
     - name: SERVER_IP
-      value: "172.17.0.5"
+      value: "10.42.1.14"
     - name: SERVER_PORT
       value: "61001"
     - name: PACKET_AMOUNT
       value: "60000"
     - name: DELAY_MULTIPLIER
-      value: "100000"
+      value: "10000"

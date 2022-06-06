@@ -3,14 +3,14 @@ kind: Pod
 metadata:
   name: sdn
 spec:
-  nodeName: cloudran
+  nodeName: k3d-bbu-node-0
   restartPolicy: Never
   containers:
   - name: sdn
     image: ocebenzer/udpsdn
     resources:
       limits:
-        cpu: "1000m"
+        cpu: "500m"
         memory: "512Mi"
     command: ["/app/sdn"]
     stdin: true

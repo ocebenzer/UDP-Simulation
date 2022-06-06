@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: bbu4
 spec:
-  nodeName: cloudran-m03
+  nodeName: k3d-cloudran3-0
   restartPolicy: Never
   containers:
   - name: server

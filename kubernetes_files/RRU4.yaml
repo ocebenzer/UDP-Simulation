@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: rru4
 spec:
-  nodeName: cloudran
+  nodeName: k3d-rru-node-0
   restartPolicy: Never
   containers:
   - name: client

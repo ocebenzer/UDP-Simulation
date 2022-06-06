@@ -3,15 +3,15 @@ kind: Pod
 metadata:
   name: bbu2
 spec:
-  nodeName: cloudran-m02
+  nodeName: k3d-bbu-node-0
   restartPolicy: Never
   containers:
   - name: server
     image: ocebenzer/udpserver
     resources:
       limits:
-        cpu: "500m"
-        memory: "512Mi"
+        cpu: "200m"
+        memory: "256Mi"
     command: ["/app/server"]
     args: ["$(PORT)", "$(LOGFILE_PATH)", "$(SERVER_ID)"]
     env:
