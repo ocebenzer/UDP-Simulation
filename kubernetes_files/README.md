@@ -4,24 +4,32 @@
 ## Cluster Initialization
 
 * Create a kubernetes cluster
-    * [minikube](https://minikube.sigs.k8s.io/docs/start/) might be a good start
-    * ```
-      minikube config set memory 2048
-      minikube config set cpus 2
-      minikube config set disk-size 20GB
-      ```
-    * ```
-      minikube start --nodes 3 -p cloudran
-      alias kubectl="minikube -p cloudran kubectl --"
-      ```
+    * [minikube](https://minikube.sigs.k8s.io/docs/start/) might be a good start:
+        ```
+        minikube config set memory 1536M
+        minikube config set cpus 2
+        minikube config set disk-size 20GB
+        ```
+        ```
+        minikube start --nodes 3
+        alias kubectl="minikube kubectl --"
+        ```
 
-* Create a Persistent Volume && Persistent Volume Claim:
-    ```
-    kubectl apply -f pv.yaml -f pvc.yaml
-    ```
-    * This makes sure that our storage is independent from our Server pods
-    
-    * Make sure to create specified local path on node with persistent volume
+* Create an NFS Server:
+    * Create the NFS Server Node:
+        ```
+        kubectl apply -f NFS.yaml
+        ```
+    * Find the NFS Server IP:
+        ```
+        kubectl get pod -o wide
+        ```
+    * Set the nfs.server to newly created NFS Server IP in `PV.yaml`
+    * Create the Persistent Volume && Persistent Volume Claim:
+        ```
+        kubectl apply -f PV.yaml
+        ```
+
 
 ## Pod Initialization
 * Create BBU pods:
@@ -46,6 +54,17 @@
     kubectl attach sdn -it
     ```
     * type `help` for SDN usage
+    * example SDN port forwarding:
+        ```
+        add 61001 10.244.1.2:61000
+        add 61002 10.244.1.3:61000
+        add 61003 10.244.1.4:61000
+        add 61004 10.244.2.2:61000
+        ```
+    * example SDN port forwarding update
+        ```
+        update 2 10.244.2.3:61000
+        ```
 
 * Create RRU pods:
     ```
@@ -57,25 +76,36 @@
     kubectl get status -o wide
     ```
 
-## See Results
+## Debug
 * You ssh into nodes using:
     ```
-    minikube -p cloudran ssh
-    minikube -p cloudran ssh -n ${NODE_NAME}
+    minikube ssh
+    minikube ssh -n ${NODE_NAME}
+    ```
+    or
+    ```
+    ssh -i $(minikube ssh-key) docker@$(minikube ip)
     ```
 * You can also sh into running pods using:
     ```
     kubectl exec --stdin --tty ${POD_NAME} -- /bin/sh
     ```
+
+## Results
+* Results will be in the nfs server node:
+    ```
+    kubectl exec --stdin --tty nfs -- /bin/sh
+    # cd /exports
+    # ls
+    ```
 * Get the .csv files:
     ```
-    scp -i $(minikube -p cloudran ssh-key) \
-        docker@$(minikube -p cloudran ip):/mnt/data/*.csv \
-        .
+    kubectl cp nfs:/exports ./logs
     ```
+
 
 ### Well Done
 * Don't forget to delete minikube cluster:
     ```
-    minikube delete -p cloudran
+    minikube delete
     ```
