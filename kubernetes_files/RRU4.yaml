@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: rru4
 spec:
-  nodeName: minikube-m02
+  nodeName: cloudran
   restartPolicy: Never
   containers:
   - name: client
@@ -16,7 +16,7 @@ spec:
     args: ["$(SERVER_IP)", "$(SERVER_PORT)", "$(PACKET_AMOUNT)", "$(DELAY_MULTIPLIER)"]
     env:
     - name: SERVER_IP
-      value: "10.244.1.4"
+      value: "10.244.0.4"
     - name: SERVER_PORT
       value: "61004"
     - name: PACKET_AMOUNT

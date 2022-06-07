@@ -6,16 +6,17 @@
 * Create a kubernetes cluster
     * [minikube](https://minikube.sigs.k8s.io/docs/start/) might be a good start:
         ```
-        minikube config set memory 1256M # 2048 if possible
-        minikube config set cpus 2
+        minikube config set memory 1816M # 2048 if possible
+        minikube config set cpus 3
         minikube config set disk-size 20GB
         ```
         ```
-        minikube start --nodes 4 # allocates 4x2 cores
-        minikube start --driver=docker --nodes 4 # might use less resources
+        minikube start -p cloudran --nodes 3 # allocates 3x3 cores
+        minikube start -p cloudran --driver=kvm --nodes 3 # alternative
+        minikube start -p cloudran --driver=docker --nodes 3 # alternative
         ```
         ```
-        alias kubectl="minikube kubectl --"
+        alias kubectl="minikube -p cloudran kubectl --"
         ```
 
 * Create an NFS Server:
@@ -82,12 +83,12 @@
 ## Debug
 * You ssh into nodes using:
     ```
-    minikube ssh
-    minikube ssh -n ${NODE_NAME}
+    minikube -p cloudranssh
+    minikube -p cloudran ssh -n ${NODE_NAME}
     ```
     or
     ```
-    ssh -i $(minikube ssh-key) docker@$(minikube ip)
+    ssh -i $(minikube -p cloudran ssh-key) docker@$(minikube -p cloudran ip)
     ```
 * You can also sh into running pods using:
     ```
@@ -110,5 +111,5 @@
 ### Well Done
 * Don't forget to delete minikube cluster:
     ```
-    minikube delete
+    minikube -p cloudran delete
     ```

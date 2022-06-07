@@ -9,7 +9,7 @@ spec:
   accessModes:
   - ReadWriteMany
   nfs:
-    server: 10.244.1.2
+    server: 10.244.0.3
     path: /
   claimRef:
     name: nfs

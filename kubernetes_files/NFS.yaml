@@ -24,7 +24,7 @@ metadata:
   labels:
     role: nfs
 spec:
-  nodeName: minikube-m02
+  nodeName: cloudran
   containers:
     - name: nfs-server
       image: cpuguy83/nfs-server
@@ -35,5 +35,5 @@ spec:
         - /exports
       resources:
         limits:
-          cpu: "500m"
+          cpu: "800m"
           memory: "256M"
