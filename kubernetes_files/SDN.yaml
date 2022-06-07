@@ -10,8 +10,8 @@ spec:
     image: ocebenzer/udpsdn
     resources:
       limits:
-        cpu: "1000m"
-        memory: "512Mi"
+        cpu: "500m"
+        memory: "512M"
     command: ["/app/sdn"]
     stdin: true
     tty: true

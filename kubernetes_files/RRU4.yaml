@@ -10,16 +10,16 @@ spec:
     image: ocebenzer/udpclient
     resources:
       limits:
-        cpu: "200m"
-        memory: "256Mi"
+        cpu: "125m"
+        memory: "128M"
     command: ["/app/client"]
     args: ["$(SERVER_IP)", "$(SERVER_PORT)", "$(PACKET_AMOUNT)", "$(DELAY_MULTIPLIER)"]
     env:
     - name: SERVER_IP
-      value: "172.17.0.5"
+      value: "10.244.2.10"
     - name: SERVER_PORT
       value: "61004"
     - name: PACKET_AMOUNT
-      value: "60000"
+      value: "600"
     - name: DELAY_MULTIPLIER
-      value: "100000"
+      value: "1000"

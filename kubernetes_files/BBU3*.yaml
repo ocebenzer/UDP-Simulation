@@ -11,20 +11,20 @@ spec:
     resources:
       limits:
         cpu: "500m"
-        memory: "512Mi"
+        memory: "512M"
     command: ["/app/server"]
     args: ["$(PORT)", "$(LOGFILE_PATH)", "$(SERVER_ID)"]
     env:
     - name: PORT
       value: "61000"
     - name: LOGFILE_PATH
-      value: "/storage/bbu3.csv"
+      value: "/nfs/bbu3.csv"
     - name: SERVER_ID
       value: "BBU3*"
     volumeMounts:
-      - mountPath: "/storage"
-        name: mymount
+      - name: nfs
+        mountPath: /nfs
   volumes:
-    - name: mymount
+    - name: nfs
       persistentVolumeClaim:
-        claimName: mypvc
+        claimName: nfs
