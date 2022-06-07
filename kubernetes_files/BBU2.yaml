@@ -10,21 +10,21 @@ spec:
     image: ocebenzer/udpserver
     resources:
       limits:
-        cpu: "500m"
-        memory: "512Mi"
+        cpu: "800m"
+        memory: "400M"
     command: ["/app/server"]
     args: ["$(PORT)", "$(LOGFILE_PATH)", "$(SERVER_ID)"]
     env:
     - name: PORT
       value: "61000"
     - name: LOGFILE_PATH
-      value: "/storage/bbu2.csv"
+      value: "/nfs/bbu2.csv"
     - name: SERVER_ID
-      value: "BBU2"
+      value: "bbu2.1"
     volumeMounts:
-      - mountPath: "/storage"
-        name: mymount
+      - name: nfs
+        mountPath: /nfs
   volumes:
-    - name: mymount
+    - name: nfs
       persistentVolumeClaim:
-        claimName: mypvc
+        claimName: nfs

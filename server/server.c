@@ -86,8 +86,8 @@ int main(int argc, char* argv[]) {
         delay_max = MAX(delay_max, packet->time_relative);
         delay_min = MIN(delay_min, packet->time_relative);
 
-        printf("Received Packet #%d\r", packet->id);
-        if (prev_packet->id + 1 != packet->id) printf("\rPacket #%d lost\n", prev_packet->id);
+        printf("Received Packet #%d\n", packet->id);
+        if (prev_packet->id + 1 != packet->id) printf("Packet #%d lost\n", prev_packet->id);
 
         // log packet data
         fprintf(file, "%s, %d, %lf, %ld.%06ld, %ld.%06ld\n", server_id, packet->id, packet->time_relative,

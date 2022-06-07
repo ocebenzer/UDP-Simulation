@@ -43,7 +43,7 @@ int create_tunnel(struct tunnel *t) {
         close(fd[1]);
         dup2(fd[0], STDIN_FILENO);
         sprintf(buffer, "udp-sendto:%s", t->dest);
-        printf("[%d] Creating Sender: \"%s\"\n", t_index, buffer);
+        // printf("[%d] Creating Sender: \"%s\"\n", t_index, buffer);
         int status = execl(SOCAT_PATH, SOCAT_PATH, "-", buffer, NULL);
         printf("[%d] Warning - Sender exit status %d\n", t_index, status);
         exit(1);

@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     printf("Starting sending %d Packets to %s:%d with poisson random delay %dms\n", packet_amount, server_ip, port, POISSON_AVG*delay_multiplier/1000);
     for (int i = 0; i < packet_amount; i++) {
         int delay = poisson_random() * delay_multiplier;
-        printf("Sending Packet #%d/%d - next delay is %dusec\r", i+1, packet_amount, delay);
+        printf("Sending Packet #%d/%d - next delay is %dusec\n", i+1, packet_amount, delay);
         // fflush(stdout);
         send_packet(socketfd, server_address, i+1); // packet ids start from 1
         // printf("Packet #%d sent\n", i+1);

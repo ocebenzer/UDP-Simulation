@@ -3,28 +3,28 @@ kind: Pod
 metadata:
   name: bbu1
 spec:
-  nodeName: cloudran
+  nodeName: cloudran-m02
   restartPolicy: Never
   containers:
   - name: server
     image: ocebenzer/udpserver
     resources:
       limits:
-        cpu: "500m"
-        memory: "512Mi"
+        cpu: "800m"
+        memory: "400M"
     command: ["/app/server"]
     args: ["$(PORT)", "$(LOGFILE_PATH)", "$(SERVER_ID)"]
     env:
     - name: PORT
       value: "61000"
     - name: LOGFILE_PATH
-      value: "/storage/bbu1.csv"
+      value: "/nfs/bbu1.csv"
     - name: SERVER_ID
-      value: "BBU1"
+      value: "bbu1.1"
     volumeMounts:
-      - mountPath: "/storage"
-        name: mymount
+      - name: nfs
+        mountPath: /nfs
   volumes:
-    - name: mymount
+    - name: nfs
       persistentVolumeClaim:
-        claimName: mypvc
+        claimName: nfs
