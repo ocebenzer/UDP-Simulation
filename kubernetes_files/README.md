@@ -6,12 +6,15 @@
 * Create a kubernetes cluster
     * [minikube](https://minikube.sigs.k8s.io/docs/start/) might be a good start:
         ```
-        minikube config set memory 1536M
+        minikube config set memory 1256M # 2048 if possible
         minikube config set cpus 2
         minikube config set disk-size 20GB
         ```
         ```
-        minikube start --nodes 3
+        minikube start --nodes 4 # allocates 4x2 cores
+        minikube start --driver=docker --nodes 4 # might use less resources
+        ```
+        ```
         alias kubectl="minikube kubectl --"
         ```
 

@@ -3,20 +3,20 @@ kind: Pod
 metadata:
   name: rru4
 spec:
-  nodeName: minikube
+  nodeName: minikube-m02
   restartPolicy: Never
   containers:
   - name: client
     image: ocebenzer/udpclient
     resources:
       limits:
-        cpu: "50m"
-        memory: "64M"
+        cpu: "250m"
+        memory: "128M"
     command: ["/app/client"]
     args: ["$(SERVER_IP)", "$(SERVER_PORT)", "$(PACKET_AMOUNT)", "$(DELAY_MULTIPLIER)"]
     env:
     - name: SERVER_IP
-      value: "10.244.0.4"
+      value: "10.244.1.4"
     - name: SERVER_PORT
       value: "61004"
     - name: PACKET_AMOUNT

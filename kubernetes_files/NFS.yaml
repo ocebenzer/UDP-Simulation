@@ -24,7 +24,7 @@ metadata:
   labels:
     role: nfs
 spec:
-  nodeName: minikube
+  nodeName: minikube-m02
   containers:
     - name: nfs-server
       image: cpuguy83/nfs-server
@@ -35,5 +35,5 @@ spec:
         - /exports
       resources:
         limits:
-          cpu: "300m"
-          memory: "128M"
+          cpu: "500m"
+          memory: "256M"

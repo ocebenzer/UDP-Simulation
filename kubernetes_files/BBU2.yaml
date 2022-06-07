@@ -3,15 +3,15 @@ kind: Pod
 metadata:
   name: bbu2
 spec:
-  nodeName: minikube-m02
+  nodeName: minikube-m03
   restartPolicy: Never
   containers:
   - name: server
     image: ocebenzer/udpserver
     resources:
       limits:
-        cpu: "300m"
-        memory: "128M"
+        cpu: "500m"
+        memory: "256M"
     command: ["/app/server"]
     args: ["$(PORT)", "$(LOGFILE_PATH)", "$(SERVER_ID)"]
     env:
