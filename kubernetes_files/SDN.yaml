@@ -3,15 +3,15 @@ kind: Pod
 metadata:
   name: sdn
 spec:
-  nodeName: cloudran
+  nodeName: minikube
   restartPolicy: Never
   containers:
   - name: sdn
     image: ocebenzer/udpsdn
     resources:
       limits:
-        cpu: "500m"
-        memory: "512M"
+        cpu: "200m"
+        memory: "128M"
     command: ["/app/sdn"]
     stdin: true
     tty: true
