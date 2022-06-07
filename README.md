@@ -4,7 +4,7 @@
 ## Cluster Initialization
 
 * Create a kubernetes cluster
-    * [mininet](http://mininet.org/download/) might be a good start
+    * [minikube](https://minikube.sigs.k8s.io/docs/start/) might be a good start
 
 * Create a Persistent Volume && Persistent Volume Claim:
     ```

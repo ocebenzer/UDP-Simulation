@@ -4,11 +4,11 @@
 ## Cluster Initialization
 
 * Create a kubernetes cluster
-    * [mininet](http://mininet.org/download/) might be a good start
+    * [minikube](https://minikube.sigs.k8s.io/docs/start/) might be a good start
     * ```
       minikube config set memory 2048
       minikube config set cpus 2
-      minikube config set disk-size 10GB
+      minikube config set disk-size 20GB
       ```
     * ```
       minikube start --nodes 3 -p cloudran
@@ -75,3 +75,7 @@
     ```
 
 ### Well Done
+* Don't forget to delete minikube cluster:
+    ```
+    minikube delete -p cloudran
+    ```
