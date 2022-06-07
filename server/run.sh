@@ -1,8 +1,8 @@
-docker run --rm -it --net=host server
+PORT="61000"
+LOGFILE_PATH="./log.csv"
+SERVER_ID="server"
 
-#docker run \
-#    --network udp_network \
-#    --ip 192.168.10.10 \
-#    --hostname udpserver \
-#    --name udpserver \
-#    --rm -it server
+make
+./server.out $PORT $LOGFILE_PATH $SERVER_ID
+
+# docker run --rm -it --net=host server

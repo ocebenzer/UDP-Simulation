@@ -1,9 +1,9 @@
-docker run --rm -it --net=host client
+SERVER_IP="127.0.0.1"
+SERVER_PORT="61000"
+PACKET_AMOUNT="500"
+DELAY_MULTIPLIER="1000"
 
-#docker run \
-#   --network udp_network \
-#    --ip 192.168.10.11 \
-#    --hostname udpclient \
-#    --name udpclient \
-#    --rm -it client
+make
+./client.out $SERVER_IP $SERVER_PORT $PACKET_AMOUNT $DELAY_MULTIPLIER
 
+# docker run --rm -it --net=host client

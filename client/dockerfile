@@ -2,8 +2,8 @@ FROM alpine as build-env
 RUN apk add --no-cache build-base
 WORKDIR /app
 COPY client.c .
-# Compile the binaries
-RUN gcc client.c -o client
+# Compile the binaries (-lm is to link math.c)
+RUN gcc client.c -o client -lm
 
 FROM alpine
 COPY --from=build-env /app/client /app/client
